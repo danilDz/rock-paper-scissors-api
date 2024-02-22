@@ -1,8 +1,5 @@
-import { config } from 'dotenv';
-config();
-
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { LoggerService } from './logger/logger.service';
+import { LoggerService } from '../../logger/logger.service';
 
 const dbOptions: DataSourceOptions = {
   type: 'postgres',

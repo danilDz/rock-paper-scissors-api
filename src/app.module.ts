@@ -1,20 +1,20 @@
+import { APP_PIPE, APP_FILTER } from '@nestjs/core';
 import { Module, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from './data-source';
-import { AllExceptionFilter } from './filters/all-exceptions.filter';
-import { LoggerModule } from './logger/logger.module';
-import { LoggerService } from './logger/logger.service';
+import { LoggerService } from './infrastructure/logger/logger.service';
+import { LoggerModule } from './infrastructure/logger/logger.module';
+import { UseCasesProxyModule } from './infrastructure/usecases-proxy/usecases-proxy.module';
+import { ControllersModule } from './infrastructure/controllers/controllers.module';
+import { EnvironmentConfigModule } from './infrastructure/config/environment/environment-config.module';
+import { BcryptModule } from './infrastructure/services/bcrypt/bcrypt.module';
+import { AllExceptionFilter } from './infrastructure/common/filter/all-exceptions.filter';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
-    TypeOrmModule.forRoot(dataSourceOptions),
     LoggerModule,
+    UseCasesProxyModule.register(),
+    ControllersModule,
+    BcryptModule,
+    EnvironmentConfigModule,
   ],
   providers: [
     {
