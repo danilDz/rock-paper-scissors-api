@@ -49,7 +49,7 @@ export class DatabaseUserRepository implements UserRepository {
     const user = new UserModel();
     user.createDate = userEntity.createDate;
     user.id = userEntity.id;
-    user.username = userEntity.password;
+    user.password = userEntity.password;
     user.username = userEntity.username;
     return user;
   }

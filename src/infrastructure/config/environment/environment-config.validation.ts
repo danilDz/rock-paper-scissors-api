@@ -16,6 +16,15 @@ class EnvironmentVariables {
 
   @IsString()
   LOGTAIL_SOURCE_TOKEN: string;
+
+  @IsString()
+  JWT_REDIS_URL: string;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsString()
+  JWT_EXPIRE_TIME: string;
 }
 
 export function validate(config: Record<string, unknown>) {
