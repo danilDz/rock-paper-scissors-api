@@ -6,12 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Game } from './game.entity';
-
-export enum UserStatus {
-  'in-game',
-  'made-a-choice',
-  'out-of-game',
-}
+import { UserStatus } from 'src/domain/models/user';
 
 @Entity()
 export class User {
@@ -29,6 +24,9 @@ export class User {
 
   @Column('varchar')
   status: UserStatus;
+
+  @Column('boolean')
+  isAdmin: boolean;
 
   @OneToMany(() => Game, (game) => game.firstPlayerId)
   @OneToMany(() => Game, (game) => game.secondPlayerId)

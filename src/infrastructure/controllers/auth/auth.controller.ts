@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { CurrentUser } from 'src/infrastructure/common/decorators/current-user.decorator';
 import { IJwtRedisServiceVerifyResponse } from 'src/domain/adapters/jwt-redis.interface';
@@ -10,6 +19,8 @@ import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { SignupUseCase } from 'src/usecases/auth/signup.usecase';
 import { SigninUseCase } from 'src/usecases/auth/signin.usecase';
 import { SignoutUseCase } from 'src/usecases/auth/signout.usecase';
+import { DeleteUserUseCase } from 'src/usecases/auth/delete-user.usecase';
+import { AdminGuard } from 'src/infrastructure/common/guards/admin.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -20,22 +31,22 @@ export class AuthController {
     private readonly signinUseCaseProxy: UseCaseProxy<SigninUseCase>,
     @Inject(UseCasesProxyModule.SIGNOUT_USECASE_PROXY)
     private readonly signoutUseCaseProxy: UseCaseProxy<SignoutUseCase>,
+    @Inject(UseCasesProxyModule.DELETE_USER_USECASE_PROXY)
+    private readonly deleteUserUseCaseProxy: UseCaseProxy<DeleteUserUseCase>,
   ) {}
 
   @Post('signup')
   async signup(@Body() auth: AuthDto) {
-    const user = await this.signupUseCaseProxy
+    return await this.signupUseCaseProxy
       .getInstance()
-      .execute(auth.username, auth.password);
-    return user;
+      .execute(auth.username, auth.password, auth.isAdmin);
   }
 
   @Post('signin')
-  async signin(@Body() auth: AuthDto) {
-    const token = await this.signinUseCaseProxy
+  async signin(@Body() auth: Omit<AuthDto, 'isAdmin'>) {
+    return await this.signinUseCaseProxy
       .getInstance()
       .execute(auth.username, auth.password);
-    return token;
   }
 
   @Post('signout')
@@ -51,5 +62,11 @@ export class AuthController {
   @Serialize(UserDto)
   async checkAuth(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
     return user;
+  }
+
+  @Delete('delete/:username')
+  @UseGuards(AdminGuard)
+  async deleteUser(@Param('username') username: string) {
+    return await this.deleteUserUseCaseProxy.getInstance().execute(username);
   }
 }

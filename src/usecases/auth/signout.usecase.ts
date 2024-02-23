@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { IJwtRedisService } from 'src/domain/adapters/jwt-redis.interface';
 import { UserRepository } from 'src/domain/repositories/userRepository.interface';
-import { UserStatus } from 'src/infrastructure/entities/user.entity';
+import { UserStatus } from 'src/domain/models/user';
 
 export class SignoutUseCase {
   constructor(

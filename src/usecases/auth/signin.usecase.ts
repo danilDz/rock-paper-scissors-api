@@ -3,7 +3,7 @@ import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
 import { UserRepository } from '../../domain/repositories/userRepository.interface';
 import { IJwtRedisService } from 'src/domain/adapters/jwt-redis.interface';
 import { JwtConfig } from 'src/domain/config/jwt.interface';
-import { UserStatus } from 'src/infrastructure/entities/user.entity';
+import { UserStatus } from 'src/domain/models/user';
 
 export class SigninUseCase {
   constructor(
@@ -26,7 +26,11 @@ export class SigninUseCase {
         username,
         UserStatus['in-game'],
       );
-      return await this.jwtRedisService.sign({ username }, secret, expiresIn);
+      return await this.jwtRedisService.sign(
+        { username, status: user.status, isAdmin: user.isAdmin },
+        secret,
+        expiresIn,
+      );
     } catch (err) {
       throw new BadRequestException(err.message);
     }

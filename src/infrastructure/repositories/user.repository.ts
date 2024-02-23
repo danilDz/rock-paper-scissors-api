@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel, UserWithoutPassword } from '../../domain/models/user';
 import { UserRepository } from '../../domain/repositories/userRepository.interface';
-import { User, UserStatus } from '../entities/user.entity';
+import { User } from '../entities/user.entity';
+import { UserStatus } from '../../domain/models/user';
 
 @Injectable()
 export class DatabaseUserRepository implements UserRepository {
@@ -15,10 +16,12 @@ export class DatabaseUserRepository implements UserRepository {
   async createUser(
     username: string,
     password: string,
+    isAdmin: boolean,
   ): Promise<UserWithoutPassword> {
     const user = this.userEntityRepository.create({
       username: username,
       password: password,
+      isAdmin,
       status: UserStatus['in-game'],
     });
     await this.userEntityRepository.save(user);
@@ -45,8 +48,8 @@ export class DatabaseUserRepository implements UserRepository {
       .execute();
   }
 
-  async getUserCount(): Promise<number> {
-    return await this.userEntityRepository.count();
+  async getRegularUserCount(): Promise<number> {
+    return await this.userEntityRepository.count({ where: { isAdmin: false } });
   }
 
   async deleteUserByUsername(username: string): Promise<void> {
@@ -58,6 +61,8 @@ export class DatabaseUserRepository implements UserRepository {
     user.createDate = userEntity.createDate;
     user.id = userEntity.id;
     user.username = userEntity.username;
+    user.isAdmin = userEntity.isAdmin;
+    user.status = userEntity.status;
     return user;
   }
 
@@ -67,6 +72,8 @@ export class DatabaseUserRepository implements UserRepository {
     user.id = userEntity.id;
     user.password = userEntity.password;
     user.username = userEntity.username;
+    user.isAdmin = userEntity.isAdmin;
+    user.status = userEntity.status;
     return user;
   }
 }

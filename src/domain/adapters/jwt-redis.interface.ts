@@ -1,9 +1,13 @@
+import { UserStatus } from '../models/user';
+
 export interface IJwtRedisServicePayload {
   username: string;
+  status: UserStatus;
+  isAdmin: boolean;
 }
 
-export interface IJwtRedisServiceVerifyResponse {
-  username: string;
+export interface IJwtRedisServiceVerifyResponse
+  extends IJwtRedisServicePayload {
   jti: string;
   iat: number;
   exp: number;

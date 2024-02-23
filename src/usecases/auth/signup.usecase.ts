@@ -16,9 +16,9 @@ export class SignupUseCase {
     private readonly jwtConfig: JwtConfig,
   ) {}
 
-  async execute(username: string, password: string) {
-    const count = await this.userRepository.getUserCount();
-    if (count === 2)
+  async execute(username: string, password: string, isAdmin: boolean) {
+    const count = await this.userRepository.getRegularUserCount();
+    if (count >= 2 && !isAdmin)
       throw new InternalServerErrorException(
         'Sorry, but the maximum number of users has been reached!',
       );
@@ -30,11 +30,12 @@ export class SignupUseCase {
       const user = await this.userRepository.createUser(
         username,
         hashedPassword,
+        isAdmin,
       );
       const secret = this.jwtConfig.getJwtSecret();
       const expiresIn = this.jwtConfig.getJwtExpireTime();
       const token = await this.jwtRedisService.sign(
-        { username },
+        { username, status: user.status, isAdmin: user.isAdmin },
         secret,
         expiresIn,
       );
