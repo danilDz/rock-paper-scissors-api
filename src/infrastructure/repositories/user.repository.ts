@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel, UserWithoutPassword } from '../../domain/models/user';
 import { UserRepository } from '../../domain/repositories/userRepository.interface';
-import { User } from '../entities/user.entity';
+import { User, UserStatus } from '../entities/user.entity';
 
 @Injectable()
 export class DatabaseUserRepository implements UserRepository {
@@ -16,7 +16,11 @@ export class DatabaseUserRepository implements UserRepository {
     username: string,
     password: string,
   ): Promise<UserWithoutPassword> {
-    const user = await this.userEntityRepository.create({ username, password });
+    const user = this.userEntityRepository.create({
+      username: username,
+      password: password,
+      status: UserStatus['in-game'],
+    });
     await this.userEntityRepository.save(user);
     return this.toUserWithoutPassword(user);
   }
@@ -27,6 +31,18 @@ export class DatabaseUserRepository implements UserRepository {
     });
     if (!user) return null;
     return this.toUser(user);
+  }
+
+  async updateUserStatusByUsername(
+    username: string,
+    status: UserStatus,
+  ): Promise<void> {
+    await this.userEntityRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ status })
+      .where('username = :username', { username })
+      .execute();
   }
 
   async getUserCount(): Promise<number> {

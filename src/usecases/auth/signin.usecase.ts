@@ -3,6 +3,7 @@ import { IBcryptService } from '../../domain/adapters/bcrypt.interface';
 import { UserRepository } from '../../domain/repositories/userRepository.interface';
 import { IJwtRedisService } from 'src/domain/adapters/jwt-redis.interface';
 import { JwtConfig } from 'src/domain/config/jwt.interface';
+import { UserStatus } from 'src/infrastructure/entities/user.entity';
 
 export class SigninUseCase {
   constructor(
@@ -21,6 +22,10 @@ export class SigninUseCase {
         throw new BadRequestException('Wrong password!');
       const secret = this.jwtConfig.getJwtSecret();
       const expiresIn = this.jwtConfig.getJwtExpireTime();
+      await this.userRepository.updateUserStatusByUsername(
+        username,
+        UserStatus['in-game'],
+      );
       return await this.jwtRedisService.sign({ username }, secret, expiresIn);
     } catch (err) {
       throw new BadRequestException(err.message);

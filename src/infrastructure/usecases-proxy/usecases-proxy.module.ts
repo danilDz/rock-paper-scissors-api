@@ -78,10 +78,15 @@ export class UseCasesProxyModule {
             ),
         },
         {
-          inject: [JwtRedisService],
+          inject: [JwtRedisService, DatabaseUserRepository],
           provide: UseCasesProxyModule.SIGNOUT_USECASE_PROXY,
-          useFactory: (jwtRedisService: JwtRedisService) =>
-            new UseCaseProxy(new SignoutUseCase(jwtRedisService)),
+          useFactory: (
+            jwtRedisService: JwtRedisService,
+            userRepository: DatabaseUserRepository,
+          ) =>
+            new UseCaseProxy(
+              new SignoutUseCase(jwtRedisService, userRepository),
+            ),
         },
       ],
       exports: [

@@ -5,6 +5,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+export enum UserStatus {
+  'in-game',
+  'made-a-choice',
+  'out-of-game',
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -18,4 +24,7 @@ export class User {
 
   @Column('text')
   password: string;
+
+  @Column('varchar')
+  status: UserStatus;
 }

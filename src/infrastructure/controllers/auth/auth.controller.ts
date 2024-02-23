@@ -41,7 +41,9 @@ export class AuthController {
   @Post('signout')
   @UseGuards(AuthGuard)
   async signout(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
-    await this.signoutUseCaseProxy.getInstance().execute(user.jti);
+    await this.signoutUseCaseProxy
+      .getInstance()
+      .execute(user.jti, user.username);
     return 'Logged out';
   }
 
