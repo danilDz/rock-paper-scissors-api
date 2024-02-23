@@ -12,6 +12,9 @@ import { JwtRedisService } from '../services/jwt-redis/jwt-redis.service';
 import { EnvironmentConfigService } from '../config/environment/environment-config.service';
 import { JwtRedisModule } from '../services/jwt-redis/jwt-redis.module';
 import { EnvironmentConfigModule } from '../config/environment/environment-config.module';
+import { DatabaseGameRepository } from '../repositories/game.repository';
+import { CreateGameUseCase } from 'src/usecases/game/create-game.usecase';
+import { UpdateGameUseCase } from 'src/usecases/game/update-game.usecase';
 
 @Module({
   imports: [
@@ -26,6 +29,8 @@ export class UseCasesProxyModule {
   static SIGNUP_USECASE_PROXY = 'SignupUseCaseProxy';
   static SIGNIN_USECASE_PROXY = 'SigninUseCaseProxy';
   static SIGNOUT_USECASE_PROXY = 'SignoutUseCaseProxy';
+  static CREATE_GAME_USECASE_PROXY = 'CreateGameUseCaseProxy';
+  static UPDATE_GAME_USECASE_PROXY = 'UpdateGameUseCaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -88,11 +93,25 @@ export class UseCasesProxyModule {
               new SignoutUseCase(jwtRedisService, userRepository),
             ),
         },
+        {
+          inject: [DatabaseGameRepository],
+          provide: UseCasesProxyModule.CREATE_GAME_USECASE_PROXY,
+          useFactory: (gameRepository: DatabaseGameRepository) =>
+            new UseCaseProxy(new CreateGameUseCase(gameRepository)),
+        },
+        {
+          inject: [DatabaseGameRepository],
+          provide: UseCasesProxyModule.UPDATE_GAME_USECASE_PROXY,
+          useFactory: (gameRepository: DatabaseGameRepository) =>
+            new UseCaseProxy(new UpdateGameUseCase(gameRepository)),
+        },
       ],
       exports: [
         UseCasesProxyModule.SIGNUP_USECASE_PROXY,
         UseCasesProxyModule.SIGNIN_USECASE_PROXY,
         UseCasesProxyModule.SIGNOUT_USECASE_PROXY,
+        UseCasesProxyModule.CREATE_GAME_USECASE_PROXY,
+        UseCasesProxyModule.UPDATE_GAME_USECASE_PROXY,
       ],
     };
   }

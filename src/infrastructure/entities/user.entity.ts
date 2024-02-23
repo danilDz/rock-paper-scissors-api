@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Game } from './game.entity';
 
 export enum UserStatus {
   'in-game',
@@ -27,4 +29,8 @@ export class User {
 
   @Column('varchar')
   status: UserStatus;
+
+  @OneToMany(() => Game, (game) => game.firstPlayerId)
+  @OneToMany(() => Game, (game) => game.secondPlayerId)
+  games: Game;
 }
