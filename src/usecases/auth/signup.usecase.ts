@@ -35,7 +35,7 @@ export class SignupUseCase {
       const secret = this.jwtConfig.getJwtSecret();
       const expiresIn = this.jwtConfig.getJwtExpireTime();
       const token = await this.jwtRedisService.sign(
-        { username, status: user.status, isAdmin: user.isAdmin },
+        { username, status: user.status, isAdmin: user.isAdmin, id: user.id },
         secret,
         expiresIn,
       );

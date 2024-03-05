@@ -9,6 +9,19 @@ export class CreateGameUseCase {
       throw new ConflictException(
         'First player ID and Second player ID must not be the same!',
       );
+    console.log(
+      await this.gameRepository.getGameByBothPlayerIds(
+        firstPlayerId,
+        secondPlayerId,
+      ),
+    );
+    if (
+      await this.gameRepository.getGameByBothPlayerIds(
+        firstPlayerId,
+        secondPlayerId,
+      )
+    )
+      throw new ConflictException('Game with these players already exist!');
     return await this.gameRepository.createGame(firstPlayerId, secondPlayerId);
   }
 }

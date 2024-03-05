@@ -1,6 +1,7 @@
 import { UserStatus } from '../models/user';
 
 export interface IJwtRedisServicePayload {
+  id: string;
   username: string;
   status: UserStatus;
   isAdmin: boolean;

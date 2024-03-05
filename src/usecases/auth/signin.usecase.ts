@@ -27,7 +27,7 @@ export class SigninUseCase {
         UserStatus['in-game'],
       );
       return await this.jwtRedisService.sign(
-        { username, status: user.status, isAdmin: user.isAdmin },
+        { username, status: user.status, isAdmin: user.isAdmin, id: user.id },
         secret,
         expiresIn,
       );

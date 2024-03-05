@@ -7,19 +7,26 @@ import {
   Post,
   Delete,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/infrastructure/common/guards/auth.guard';
+import { AdminGuard } from 'src/infrastructure/common/guards/admin.guard';
 import { UseCasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { CreateGameUseCase } from 'src/usecases/game/create-game.usecase';
 import { CreateGameDto } from './dto/create-game.dto';
+import { GameDto } from './dto/game.dto';
 import { UpdateGameModel } from 'src/domain/models/game';
 import { UpdateGameUseCase } from 'src/usecases/game/update-game.usecase';
 import { DeleteGameUseCase } from 'src/usecases/game/delete-game.usecase';
-import { AdminGuard } from 'src/infrastructure/common/guards/admin.guard';
+import { GetGameUseCase } from 'src/usecases/game/get-game.usecase';
+import { CurrentUser } from 'src/infrastructure/common/decorators/current-user.decorator';
+import { IJwtRedisServiceVerifyResponse } from 'src/domain/adapters/jwt-redis.interface';
+import { Serialize } from 'src/infrastructure/common/interceptors/serialize.interceptor';
 
 @Controller('game')
 @UseGuards(AuthGuard)
+@Serialize(GameDto)
 export class GameController {
   constructor(
     @Inject(UseCasesProxyModule.CREATE_GAME_USECASE_PROXY)
@@ -28,7 +35,14 @@ export class GameController {
     private readonly updateGameUseCaseProxy: UseCaseProxy<UpdateGameUseCase>,
     @Inject(UseCasesProxyModule.DELETE_GAME_USECASE_PROXY)
     private readonly deleteGameUseCaseProxy: UseCaseProxy<DeleteGameUseCase>,
+    @Inject(UseCasesProxyModule.GET_GAME_USECASE_PROXY)
+    private readonly getGameUseCaseProxy: UseCaseProxy<GetGameUseCase>,
   ) {}
+
+  @Get('get')
+  async getGame(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
+    return await this.getGameUseCaseProxy.getInstance().execute(user.id);
+  }
 
   @Post('create')
   async createGame(@Body() body: CreateGameDto) {

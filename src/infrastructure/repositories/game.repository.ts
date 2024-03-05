@@ -11,6 +11,32 @@ export class DatabaseGameRepository implements GameRepository {
     private readonly gameEntityRepository: Repository<Game>,
   ) {}
 
+  async getGameByPlayerId(id: string): Promise<Game> {
+    return await this.gameEntityRepository
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.firstPlayerId', 'user')
+      .leftJoinAndSelect('game.secondPlayerId', 'user as player')
+      .where('game.firstPlayerIdId = :firstId', { firstId: id })
+      .orWhere('game.secondPlayerIdId = :secondId', { secondId: id })
+      .getOne();
+  }
+
+  async getGameByBothPlayerIds(id1: string, id2: string): Promise<Game> {
+    return await this.gameEntityRepository
+      .createQueryBuilder('game')
+      .where(
+        'game.firstPlayerId = :firstId AND game.secondPlayerId = :secondId',
+      )
+      .orWhere(
+        'game.firstPlayerId = :secondId AND game.secondPlayerId = :firstId',
+      )
+      .setParameters({
+        firstId: id1,
+        secondId: id2,
+      })
+      .getOne();
+  }
+
   async createGame(
     firstPlayerId: string,
     secondPlayerId: string,

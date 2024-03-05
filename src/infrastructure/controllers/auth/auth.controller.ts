@@ -23,6 +23,7 @@ import { DeleteUserUseCase } from 'src/usecases/auth/delete-user.usecase';
 import { AdminGuard } from 'src/infrastructure/common/guards/admin.guard';
 
 @Controller('auth')
+@Serialize(UserDto)
 export class AuthController {
   constructor(
     @Inject(UseCasesProxyModule.SIGNUP_USECASE_PROXY)
@@ -59,7 +60,6 @@ export class AuthController {
   }
 
   @Get('check')
-  @Serialize(UserDto)
   async checkAuth(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
     return user;
   }
