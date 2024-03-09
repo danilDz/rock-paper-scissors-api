@@ -17,8 +17,8 @@ export class SignupUseCase {
   ) {}
 
   async execute(username: string, password: string, isAdmin: boolean) {
-    const count = await this.userRepository.getRegularUserCount();
-    if (count >= 2 && !isAdmin)
+    const users = await this.userRepository.getRegularUsers();
+    if (users.length >= 2 && !isAdmin)
       throw new InternalServerErrorException(
         'Sorry, but the maximum number of users has been reached!',
       );

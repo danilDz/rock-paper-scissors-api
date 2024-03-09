@@ -48,8 +48,10 @@ export class DatabaseUserRepository implements UserRepository {
       .execute();
   }
 
-  async getRegularUserCount(): Promise<number> {
-    return await this.userEntityRepository.count({ where: { isAdmin: false } });
+  async getRegularUsers(): Promise<string[]> {
+    return (
+      await this.userEntityRepository.find({ where: { isAdmin: false } })
+    ).map((item) => item.id);
   }
 
   async deleteUserByUsername(username: string): Promise<void> {

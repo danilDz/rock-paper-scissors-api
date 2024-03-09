@@ -21,6 +21,7 @@ import { SigninUseCase } from 'src/usecases/auth/signin.usecase';
 import { SignoutUseCase } from 'src/usecases/auth/signout.usecase';
 import { DeleteUserUseCase } from 'src/usecases/auth/delete-user.usecase';
 import { AdminGuard } from 'src/infrastructure/common/guards/admin.guard';
+import { GetRegularUsersUseCase } from 'src/usecases/auth/get-regular-users.usecase';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -34,6 +35,8 @@ export class AuthController {
     private readonly signoutUseCaseProxy: UseCaseProxy<SignoutUseCase>,
     @Inject(UseCasesProxyModule.DELETE_USER_USECASE_PROXY)
     private readonly deleteUserUseCaseProxy: UseCaseProxy<DeleteUserUseCase>,
+    @Inject(UseCasesProxyModule.GET_REGULAR_USERS_USECASE_PROXY)
+    private readonly getRegularUsersUseCaseProxy: UseCaseProxy<GetRegularUsersUseCase>,
   ) {}
 
   @Post('signup')
@@ -62,6 +65,12 @@ export class AuthController {
   @Get('check')
   async checkAuth(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
     return user;
+  }
+
+  @Get('get/users')
+  @UseGuards(AuthGuard)
+  async getRegularUsers() {
+    return await this.getRegularUsersUseCaseProxy.getInstance().execute();
   }
 
   @Delete('delete/:username')

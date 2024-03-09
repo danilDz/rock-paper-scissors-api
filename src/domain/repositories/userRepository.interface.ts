@@ -12,6 +12,6 @@ export interface UserRepository {
     username: string,
     status: UserStatus,
   ): Promise<void>;
-  getRegularUserCount(): Promise<number>;
+  getRegularUsers(): Promise<string[]>;
   deleteUserByUsername(username: string): Promise<void>;
 }
