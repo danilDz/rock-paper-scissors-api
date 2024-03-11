@@ -114,10 +114,15 @@ export class UseCasesProxyModule {
             new UseCaseProxy(new CreateGameUseCase(gameRepository)),
         },
         {
-          inject: [DatabaseGameRepository],
+          inject: [DatabaseGameRepository, DatabaseUserRepository],
           provide: UseCasesProxyModule.UPDATE_GAME_USECASE_PROXY,
-          useFactory: (gameRepository: DatabaseGameRepository) =>
-            new UseCaseProxy(new UpdateGameUseCase(gameRepository)),
+          useFactory: (
+            gameRepository: DatabaseGameRepository,
+            userRepository: DatabaseUserRepository,
+          ) =>
+            new UseCaseProxy(
+              new UpdateGameUseCase(gameRepository, userRepository),
+            ),
         },
         {
           inject: [DatabaseGameRepository],

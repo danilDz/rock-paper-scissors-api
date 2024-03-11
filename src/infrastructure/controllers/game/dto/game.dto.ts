@@ -27,4 +27,10 @@ export class GameDto {
   @Expose()
   @Transform(({ value }) => Choice[value])
   secondPlayerChoice: Choice;
+
+  @Expose()
+  gameNotFound: boolean;
+
+  @Expose()
+  message: string;
 }

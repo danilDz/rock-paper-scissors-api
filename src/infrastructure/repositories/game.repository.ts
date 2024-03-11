@@ -11,7 +11,16 @@ export class DatabaseGameRepository implements GameRepository {
     private readonly gameEntityRepository: Repository<Game>,
   ) {}
 
-  async getGameByPlayerId(id: string): Promise<Game> {
+  async getGameById(id: string): Promise<GameModel> {
+    return await this.gameEntityRepository
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.firstPlayerId', 'user')
+      .leftJoinAndSelect('game.secondPlayerId', 'user as player')
+      .where('game.id = :id', { id })
+      .getOne();
+  }
+
+  async getGameByPlayerId(id: string): Promise<GameModel> {
     return await this.gameEntityRepository
       .createQueryBuilder('game')
       .leftJoinAndSelect('game.firstPlayerId', 'user')
@@ -21,7 +30,7 @@ export class DatabaseGameRepository implements GameRepository {
       .getOne();
   }
 
-  async getGameByBothPlayerIds(id1: string, id2: string): Promise<Game> {
+  async getGameByBothPlayerIds(id1: string, id2: string): Promise<GameModel> {
     return await this.gameEntityRepository
       .createQueryBuilder('game')
       .where(

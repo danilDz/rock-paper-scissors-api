@@ -12,10 +12,12 @@ export class SignoutUseCase {
   async execute(jti: string, username: string) {
     try {
       await this.jwtRedisService.destroy(jti);
-      await this.userRepository.updateUserStatusByUsername(
-        username,
-        UserStatus['out-of-game'],
-      );
+      const user = await this.userRepository.getUserByUsername(username);
+      if (UserStatus[user.status] !== 'made-a-choice')
+        await this.userRepository.updateUserStatusByUsername(
+          username,
+          UserStatus['out-of-game'],
+        );
     } catch (err) {
       throw new BadRequestException(err.message);
     }
