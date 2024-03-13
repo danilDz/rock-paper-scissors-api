@@ -33,4 +33,10 @@ export class Game {
 
   @Column('varchar')
   secondPlayerChoice: Choice;
+
+  @Column('boolean')
+  firstPlayerJoined: boolean;
+
+  @Column('boolean')
+  secondPlayerJoined: boolean;
 }

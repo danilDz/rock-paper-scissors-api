@@ -19,6 +19,7 @@ import { UpdateGameUseCase } from 'src/usecases/game/update-game.usecase';
 import { DeleteGameUseCase } from 'src/usecases/game/delete-game.usecase';
 import { GetGameUseCase } from 'src/usecases/game/get-game.usecase';
 import { GetRegularUsersUseCase } from 'src/usecases/auth/get-regular-users.usecase';
+import { DetermineGameResultUseCase } from 'src/usecases/game/determine-game-result.usecase';
 
 @Module({
   imports: [
@@ -39,6 +40,8 @@ export class UseCasesProxyModule {
   static DELETE_GAME_USECASE_PROXY = 'DeleteGameUseCaseProxy';
   static GET_GAME_USECASE_PROXY = 'GetGameUseCaseProxy';
   static GET_REGULAR_USERS_USECASE_PROXY = 'GetRegularUsersUseCaseProxy';
+  static DETERMINE_GAME_RESULT_USECASE_PROXY =
+    'DetermineGameResultUseCaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -142,6 +145,17 @@ export class UseCasesProxyModule {
           useFactory: (userRepository: DatabaseUserRepository) =>
             new UseCaseProxy(new GetRegularUsersUseCase(userRepository)),
         },
+        {
+          inject: [DatabaseGameRepository, DatabaseUserRepository],
+          provide: UseCasesProxyModule.DETERMINE_GAME_RESULT_USECASE_PROXY,
+          useFactory: (
+            gameRepository: DatabaseGameRepository,
+            userRepository: DatabaseUserRepository,
+          ) =>
+            new UseCaseProxy(
+              new DetermineGameResultUseCase(gameRepository, userRepository),
+            ),
+        },
       ],
       exports: [
         UseCasesProxyModule.SIGNUP_USECASE_PROXY,
@@ -153,6 +167,7 @@ export class UseCasesProxyModule {
         UseCasesProxyModule.DELETE_GAME_USECASE_PROXY,
         UseCasesProxyModule.GET_GAME_USECASE_PROXY,
         UseCasesProxyModule.GET_REGULAR_USERS_USECASE_PROXY,
+        UseCasesProxyModule.DETERMINE_GAME_RESULT_USECASE_PROXY,
       ],
     };
   }

@@ -23,7 +23,10 @@ export class UpdateGameUseCase {
       );
 
     const game = await this.gameRepository.getGameById(id);
+    if (!game) throw new BadRequestException('No game was found with this id!');
+
     if (
+      updateObject.firstPlayerChoice &&
       (Choice[updateObject.firstPlayerChoice] as unknown as Choice) !==
         Choice['not-selected'] &&
       (game.firstPlayerId as unknown as UserModel).status !==
@@ -35,6 +38,7 @@ export class UpdateGameUseCase {
       );
     }
     if (
+      updateObject.secondPlayerChoice &&
       (Choice[updateObject.secondPlayerChoice] as unknown as Choice) !==
         Choice['not-selected'] &&
       (game.secondPlayerId as unknown as UserModel).status !==
@@ -47,6 +51,7 @@ export class UpdateGameUseCase {
     }
 
     if (
+      updateObject.firstPlayerChoice &&
       (Choice[updateObject.firstPlayerChoice] as unknown as Choice) ===
         Choice['not-selected'] &&
       (game.firstPlayerId as unknown as UserModel).status ==
@@ -58,6 +63,7 @@ export class UpdateGameUseCase {
       );
     }
     if (
+      updateObject.secondPlayerChoice &&
       (Choice[updateObject.secondPlayerChoice] as unknown as Choice) ===
         Choice['not-selected'] &&
       (game.secondPlayerId as unknown as UserModel).status ==

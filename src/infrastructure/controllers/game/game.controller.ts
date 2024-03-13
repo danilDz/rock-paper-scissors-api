@@ -20,6 +20,7 @@ import { UpdateGameModel } from 'src/domain/models/game';
 import { UpdateGameUseCase } from 'src/usecases/game/update-game.usecase';
 import { DeleteGameUseCase } from 'src/usecases/game/delete-game.usecase';
 import { GetGameUseCase } from 'src/usecases/game/get-game.usecase';
+import { DetermineGameResultUseCase } from 'src/usecases/game/determine-game-result.usecase';
 import { CurrentUser } from 'src/infrastructure/common/decorators/current-user.decorator';
 import { IJwtRedisServiceVerifyResponse } from 'src/domain/adapters/jwt-redis.interface';
 import { Serialize } from 'src/infrastructure/common/interceptors/serialize.interceptor';
@@ -37,6 +38,8 @@ export class GameController {
     private readonly deleteGameUseCaseProxy: UseCaseProxy<DeleteGameUseCase>,
     @Inject(UseCasesProxyModule.GET_GAME_USECASE_PROXY)
     private readonly getGameUseCaseProxy: UseCaseProxy<GetGameUseCase>,
+    @Inject(UseCasesProxyModule.DETERMINE_GAME_RESULT_USECASE_PROXY)
+    private readonly determineGameResultUseCaseProxy: UseCaseProxy<DetermineGameResultUseCase>,
   ) {}
 
   @Get('get')
@@ -63,5 +66,12 @@ export class GameController {
   @UseGuards(AdminGuard)
   async deleteGame(@Param('id') id: string) {
     return await this.deleteGameUseCaseProxy.getInstance().execute(id);
+  }
+
+  @Post('determine-result')
+  async determineResult(@CurrentUser() user: IJwtRedisServiceVerifyResponse) {
+    return await this.determineGameResultUseCaseProxy
+      .getInstance()
+      .execute(user.id);
   }
 }

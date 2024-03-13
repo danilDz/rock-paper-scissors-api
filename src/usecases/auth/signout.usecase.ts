@@ -13,7 +13,7 @@ export class SignoutUseCase {
     try {
       await this.jwtRedisService.destroy(jti);
       const user = await this.userRepository.getUserByUsername(username);
-      if (UserStatus[user.status] !== 'made-a-choice')
+      if (user.status != UserStatus['made-a-choice'])
         await this.userRepository.updateUserStatusByUsername(
           username,
           UserStatus['out-of-game'],

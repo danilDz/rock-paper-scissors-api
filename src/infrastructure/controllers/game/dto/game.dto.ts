@@ -29,6 +29,12 @@ export class GameDto {
   secondPlayerChoice: Choice;
 
   @Expose()
+  firstPlayerJoined: boolean;
+
+  @Expose()
+  secondPlayerJoined: boolean;
+
+  @Expose()
   gameNotFound: boolean;
 
   @Expose()

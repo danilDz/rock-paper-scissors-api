@@ -22,7 +22,7 @@ export class SigninUseCase {
         throw new BadRequestException('Wrong password!');
       const secret = this.jwtConfig.getJwtSecret();
       const expiresIn = this.jwtConfig.getJwtExpireTime();
-      if (UserStatus[user.status] !== 'made-a-choice')
+      if (user.status != UserStatus['made-a-choice'])
         await this.userRepository.updateUserStatusByUsername(
           username,
           UserStatus['in-game'],

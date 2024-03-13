@@ -10,6 +10,8 @@ export class UpdateGameModel {
   secondPlayerScore: number;
   firstPlayerChoice: Choice;
   secondPlayerChoice: Choice;
+  firstPlayerJoined: boolean;
+  secondPlayerJoined: boolean;
 }
 
 export class GameModel extends UpdateGameModel {

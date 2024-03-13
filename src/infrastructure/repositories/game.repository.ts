@@ -57,6 +57,8 @@ export class DatabaseGameRepository implements GameRepository {
       secondPlayerScore: 0,
       firstPlayerChoice: Choice['not-selected'],
       secondPlayerChoice: Choice['not-selected'],
+      firstPlayerJoined: false,
+      secondPlayerJoined: false,
     });
     return await this.gameEntityRepository.save(game);
   }
